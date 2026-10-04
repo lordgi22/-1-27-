@@ -1,0 +1,109 @@
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <string>
+using namespace std;
+
+// структура для одной вещи багажа
+struct Luggage {
+    string type_lugg;
+    double weight_lugg;
+};
+
+// структура для одного пассажира
+struct Passanger {
+    string FIO;
+    vector<Luggage> lugg;
+};
+
+// функция ввода информации о багаже пассаижра
+void input_Luggage(Luggage& l) {
+    cout << "Tip bagazha: ";
+    cin >> l.type_lugg;
+    cout << "Ves bagazha (kg): ";
+    cin >> l.weight_lugg;
+}
+
+// ввод данных пассажира
+// сначала ФИО (через getline, чтобы можно было с пробелами вводить)
+// потом спрашиваем сколько вещей и заполняем массив
+void input_Passanger(Passanger& p) {
+    cout << "FIO: ";
+    cin.ignore();               // чистим буфер, иначе getline сразу пустую строку схватит
+    getline(cin, p.FIO);
+
+    cout << "Skolko veshey: ";
+    int n;
+    cin >> n;
+    p.lugg.resize(n);           // говорим вектору, что будет n элементов
+
+    for (int i = 0; i < n; i++) {
+        cout << "Vesh " << i + 1 << ":" << endl;
+        input_Luggage(p.lugg[i]);   // заполняем каждую вещь отдельно
+    }
+}
+
+// вывод инфы о пассажире
+// просто пробегаемся по всем вещам и печатаем
+void output_Passanger(const Passanger& p) {
+    cout << "-- FIO: " << p.FIO << endl;
+    cout << "-- Bagazh:" << endl;
+    for (int i = 0; i < p.lugg.size(); i++) {
+        cout << "----- " << p.lugg[i].type_lugg
+            << " - " << p.lugg[i].weight_lugg << " kg" << endl;
+    }
+}
+
+// функция считает общий вес багажа
+// тупо сумма всех весов
+double all_weight(const Passanger& p) {
+    double summa = 0;
+    for (int i = 0; i < p.lugg.size(); i++) {
+        summa += p.lugg[i].weight_lugg;
+    }
+    return summa;
+}
+
+int main() {
+    int n;
+    cout << "Skolko passazhirov: ";
+    cin >> n;
+
+    vector<Passanger> passangers(n);    // массив пассажиров
+
+    // вводим информацию о каждом пассажире по очереди
+    for (int i = 0; i < n; i++) {
+        cout << "\n=== Passazhir " << i + 1 << " ===" << endl;
+        input_Passanger(passangers[i]);
+    }
+
+    // выводим всех пассажиров и их вес 
+    cout << "\n--------------------------------------------------" << endl;
+    cout << "Dannye o passazhirakh:" << endl;
+    for (int i = 0; i < n; i++) {
+        cout << "\nPassazhir " << i + 1 << ":" << endl;
+        output_Passanger(passangers[i]);
+        cout << "Obschiy ves bagazha: " << all_weight(passangers[i]) << " kg" << endl;
+    }
+
+    // решение моего варианта(27)
+    // надо найти пассажира с самым большим весом багажа
+    // логика достаточно простая, берем первого пассажира, как "прваильного" и срваниваем с остальными, если кто-т имеет вес больше, то перезаписываем
+    int maxIndex = 0;
+    double maxVes = all_weight(passangers[0]);
+
+    for (int i = 1; i < n; i++) {
+        double v = all_weight(passangers[i]);
+        if (v > maxVes) {
+            maxVes = v;
+            maxIndex = i;
+        }
+    }
+
+    // выводим итоговый ответ 
+    cout << "\n--------------------------------------------------" << endl;
+    cout << "Passazhir s maksimalnym vesom bagazha:" << endl;
+    cout << "FIO: " << passangers[maxIndex].FIO << endl;
+    cout << "Obschiy ves: " << maxVes << " kg" << endl;
+
+    return 0;
