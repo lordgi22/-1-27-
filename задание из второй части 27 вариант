@@ -107,3 +107,4 @@ int main() {
     cout << "Obschiy ves: " << maxVes << " kg" << endl;
 
     return 0;
+}
